@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100107073354) do
+ActiveRecord::Schema.define(:version => 20100115031926) do
 
   create_table "block_forms", :force => true do |t|
     t.integer  "block_id"
@@ -131,6 +131,8 @@ ActiveRecord::Schema.define(:version => 20100107073354) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "link_group_id"
+    t.string   "resource"
+    t.integer  "target_id"
   end
 
   create_table "models_views", :force => true do |t|

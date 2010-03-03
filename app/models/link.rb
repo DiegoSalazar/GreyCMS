@@ -15,4 +15,10 @@ class Link < ActiveRecord::Base
     find(:all, :select => 'title, path, relative, link_group_id, id')
   end
   
+  # Instance Methods
+  
+  def scope # used by shared model methods to build a select lists of all instances of a resource
+    self.resource
+  end
+  
 end

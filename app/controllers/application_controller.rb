@@ -21,6 +21,7 @@ class ApplicationController < ActionController::Base
                 :_field_types,  # for the virtual forms builder
                 :_page_actions, # suggestions form
                 :_models_having_assoc,
+                :_models_with_title,
                 :in_edit_mode?,
                 :reject_blocks_enabled_on_this, # for the blocks_fields
                 :reject_views_enabled_on_this,  # for the blocks_fields
@@ -168,16 +169,29 @@ class ApplicationController < ActionController::Base
   end
   
   def _models_having_assoc(for_select = false)
-    models_array = []
-    get_list_of_file_names('models').each do |name|
-      model_class = name.camelcase.constantize
-      next unless model_class.respond_to?('column_names')
+    models_array = filter_dir_entries('models') do |entry|
+      model_class = entry.camelcase.constantize
       
-      model_columns = model_class.column_names
-      models_array << name if model_columns.any? { |mc| mc != 'parent_id' && mc =~ /^(.*_id)$/i } || name =~ /(user)|(page)|(tag)/
+      model_class.respond_to?('column_names') &&
+      (model_columns.any? { |c| c != 'parent_id' && c =~ /^(.*_id)$/i } || entry =~ /(user)|(page)|(tag)/)
     end
     
     fetch_array_for models_array, for_select
+  end
+  
+  def _models_with_title(for_select = false)
+    models_array = filter_dir_entries('models') do |entry|
+      model_class = entry.camelcase.constantize
+      model_class.respond_to?('title')
+    end
+    
+    fetch_array_for models_array, for_select
+  end
+  
+  def filter_dir_entries(dir, &filter)
+    get_list_of_file_names('models').each do |entry|
+      (entries ||= []) << entry if yield(entry)
+    end
   end
   
   def fetch_array_for(array, for_select = true, plural = false) # => [ ['Subnav', 'subnav'], ... ]

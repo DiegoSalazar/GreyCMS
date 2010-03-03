@@ -5,20 +5,38 @@
 	</div>
 </div>
 
-<div class="stack">
-	<%= f.label :path %>
-	<div class="shadow_wrap">
-		<%= f.text_field :path, :class => 'required' %>
-	</div>
-</div>
-
-
-<div class="stack">
-	<div class="check_box_wrap left">
-		<%= f.check_box :relative %>
-		<%= f.label :relative, 'Relative path?' %>
+<div class="stack uncollapse">
+  <div class="left right_space">
+	  <%= f.label :link_group_id, 'Group' %>
+  	<%= f.select :link_group_id, @link_groups.map { |lg| [lg.name, lg.id] }, { :include_blank => true }, :title => 'You may put this link in a group for easy display' %>
 	</div>
 	
-	<%= f.label :link_group_id, 'Group' %>
-	<%= f.select :link_group_id, @link_groups.map { |lg| [lg.name, lg.id] }, { :include_blank => true }, :title => 'You may put this link in a group for easy display' %>
+	<div class="check_box_wrap left">
+		<%= f.check_box :relative, :class => 'pane_switch', :title => 'Are you linking to content within the site?' %>
+		<%= f.label :relative, 'Internal?' %>
+	</div>
 </div>
+
+<div id="pane_0" class="stack pane_switchable">
+	<%= f.label :path %>
+	<div class="shadow_wrap">
+		<%= f.text_field :path, :class => 'hintable required', :title => 'Absolute URL' %>
+	</div>
+</div>
+
+<div id="pane_1" class="stack uncollapse pane_switchable">
+  <div id="scope_fields" class="left right_space">
+  	<%= f.label :resource, 'Link to a' %>
+  	<%= f.select :resource, _models_with_title, { :include_blank => true }, :class => 'required scope_dropdown', :title => 'Choose the kind of item you want to link to' %>
+	</div>
+	
+	<div id="scope_target_fields" class="left">
+		<%= hidden_field_tag 'target_id', @link.target_id, :class => 'scope_down_hidden' unless @link.target_id.blank? %>
+		
+		<%= f.label :target_id, ' called ' %>
+		<%= f.select :target_id, @link.get_scope_models, { :prompt => 'Active Context'} , :class => 'scoping_dropdown no_prompt', :title => 'Select the item you want to link to' %>
+	</div>
+	
+</div>
+
+
